@@ -7,6 +7,10 @@ import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.Ultrasonic;
+import edu.wpi.first.wpilibj.SampleRobot;
+
+
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -22,11 +26,15 @@ public class Robot extends IterativeRobot {
     SendableChooser chooser;
     RobotDrive myRobot;  // class that handles basic drive operations
     Joystick Xbox;  // set to ID 1 in DriverStation
+    Ultrasonic ultra = new Ultrasonic(9,8);
+    double leftValuea;
+    double rightValuea;
     public Robot() {
         myRobot = new RobotDrive(0, 1);
         myRobot.setExpiration(0.1);
         Xbox = new Joystick(0);
     }
+    
     
 	
     /**
@@ -38,6 +46,7 @@ public class Robot extends IterativeRobot {
         chooser.addDefault("Default Auto", defaultAuto);
         chooser.addObject("My Auto", customAuto);
         SmartDashboard.putData("Auto choices", chooser);
+        ultra.setAutomaticMode(true);
     }
     
 	/**
@@ -61,12 +70,26 @@ public class Robot extends IterativeRobot {
     public void autonomousPeriodic() {
     	switch(autoSelected) {
     	case customAuto:
-        //Put custom auto code here   
-            break;
+        //Put custom auto code here 
+        	double range = ultra.getRangeInches();
+        	if (range >= 1) {
+        		leftValuea = 0.1;
+        		rightValuea = 0.1;
+        		}
+        	if (range <= 5) {leftValuea = 0.7; rightValuea = 0.7;}
+        	myRobot.tankDrive(leftValuea, rightValuea);
+            Timer.delay(0.005);		// wait for a motor update time
     	case defaultAuto:
     	default:
     	//Put default auto code here
-            break;
+        	range = ultra.getRangeInches();
+        	if (range >= 1) {
+        		leftValuea = 0.1;
+        		rightValuea = 0.1;
+        		}
+        	if (range <= 5) {leftValuea = 0.7; rightValuea = 0.7;}
+        	myRobot.tankDrive(leftValuea, rightValuea);
+            Timer.delay(0.005);		// wait for a motor update time
     	}
     }
 
@@ -76,9 +99,18 @@ public class Robot extends IterativeRobot {
     public void teleopPeriodic() {
         myRobot.setSafetyEnabled(true);
         while (isOperatorControl() && isEnabled()) {
-        	myRobot.tankDrive(Xbox.getRawAxis(5), Xbox.getY());
+        	//myRobot.tankDrive(Xbox.getRawAxis(5), Xbox.getY());
+        	double range = ultra.getRangeInches();
+        	if (range >= 1) {
+        		leftValuea = 0.1;
+        		rightValuea = 0.1;
+        		}
+        	if (range <= 5) {leftValuea = 0.7; rightValuea = 0.7;}
+        	myRobot.tankDrive(leftValuea, rightValuea);
             Timer.delay(0.005);		// wait for a motor update time
+            
         }
+        
     }
     
     /**
