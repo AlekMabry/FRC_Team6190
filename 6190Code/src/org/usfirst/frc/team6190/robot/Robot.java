@@ -1,6 +1,7 @@
 
 package org.usfirst.frc.team6190.robot;
 
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotDrive;
@@ -22,17 +23,21 @@ import edu.wpi.first.wpilibj.SampleRobot;
 public class Robot extends IterativeRobot {
     final String defaultAuto = "Default";
     final String customAuto = "My Auto";
+    
     String autoSelected;
     SendableChooser chooser;
     RobotDrive myRobot;  // class that handles basic drive operations
-    Joystick Xbox;  // set to ID 1 in DriverStation
+    Joystick Xbox = new Joystick(0); // set to ID 1 in DriverStation
     Ultrasonic ultra = new Ultrasonic(9,8);
+    
+    AnalogInput ai = new AnalogInput(0);
+    
     double leftValuea;
     double rightValuea;
+    
     public Robot() {
         myRobot = new RobotDrive(0, 1);
         myRobot.setExpiration(0.1);
-        Xbox = new Joystick(0);
     }
     
     
@@ -97,20 +102,42 @@ public class Robot extends IterativeRobot {
      * This function is called periodically during operator control
      */
     public void teleopPeriodic() {
+    	
         myRobot.setSafetyEnabled(true);
+        
         while (isOperatorControl() && isEnabled()) {
-        	//myRobot.tankDrive(Xbox.getRawAxis(5), Xbox.getY());
-        	double range = ultra.getRangeInches();
-        	if (range >= 1) {
-        		leftValuea = 0.1;
-        		rightValuea = 0.1;
-        		}
-        	if (range <= 5) {leftValuea = 0.7; rightValuea = 0.7;}
-        	myRobot.tankDrive(leftValuea, rightValuea);
+        	
+	        double xLeft = Xbox.getRawAxis(5); 
+	        double xRight = Xbox.getRawAxis(1);    
+	        	
+        	myRobot.tankDrive(xLeft, xRight);
+        	
             Timer.delay(0.005);		// wait for a motor update time
             
         }
         
+    }
+
+    /**
+     * This function is used to measure and read analog inputs
+     */
+    
+    public void readAnlg() {
+    	
+        AnalogInput.setGlobalSampleRate(62500);
+        
+        // Reads Input Of Analog Input 0
+        int Raw = ai.getValue();
+        double Volts = ai.getVoltage();
+        int averageRaw = ai.getAverageValue();
+        double averageVolts = ai.getAverageVoltage();
+        
+        if (Volts >= 2.5) {
+        	
+        //	myRobot.tankDrive(0.3, -0.3);
+        	
+        }
+    	
     }
     
     /**
