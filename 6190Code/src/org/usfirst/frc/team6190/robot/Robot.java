@@ -107,12 +107,16 @@ public class Robot extends IterativeRobot {
         
         while (isOperatorControl() && isEnabled()) {
         	
+        	
+        	
 	        double xLeft = Xbox.getRawAxis(5); 
 	        double xRight = Xbox.getRawAxis(1);    
 	        	
         	myRobot.tankDrive(xLeft, xRight);
         	
             Timer.delay(0.005);		// wait for a motor update time
+            
+            
             
         }
         
