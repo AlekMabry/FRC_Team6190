@@ -10,21 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.io.*;
 import java.net.*;
 
-class TCPClient {  
-	public static void main(String argv[]) throws Exception  {   
-		String sentence;   
-		String modifiedSentence;   
-		BufferedReader inFromUser = new BufferedReader( new InputStreamReader(System.in));   
-		Socket clientSocket = new Socket("192.168.7.2", 5030);  
-		DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());   
-		BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));   
-		sentence = inFromUser.readLine();   
-		outToServer.writeBytes(sentence + '\n');   
-		modifiedSentence = inFromServer.readLine();   
-		System.out.println("FROM SERVER: " + modifiedSentence);   
-		clientSocket.close();
-		}
-	}
+
 
 public class Robot extends IterativeRobot {
     final String defaultAuto = "Default";
@@ -92,19 +78,27 @@ public class Robot extends IterativeRobot {
         	    	lUp = -lUp;
         	    }
         		
-        		//if (reverseButton != true) {
-            		lRotate = -lRotate;
-        		//}
-        		
+            	lRotate = -lRotate;
 
+        	
         		myRobot.arcadeDrive(lUp, lRotate);
 
 
         	} else {
         		double xLeft = Xbox.getRawAxis(5);
         		double xRight = Xbox.getRawAxis(1);
+        		double xLeftButton = Xbox.getRawAxis(3);
+        		double xRightButton = Xbox.getRawAxis(4);
         		
-        		myRobot.tankDrive(xLeft, xRight);
+        		if (xLeftButton > 0.1) {
+        			myRobot.tankDrive(xLeft+xLeftButton, xRight+xRightButton);
+        		}
+        		if (xRightButton > 0.1) {
+        			myRobot.tankDrive(xLeft-xRightButton, xRight-xRightButton);
+        		}
+        		if (xLeftButton <= 0.1 && xRightButton <= 0.1) {
+            		myRobot.tankDrive(xLeft, xRight);
+        		}
         		
         		Timer.delay(0.005);
         	}
