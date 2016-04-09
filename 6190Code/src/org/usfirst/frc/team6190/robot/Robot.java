@@ -1,3 +1,4 @@
+
 package org.usfirst.frc.team6190.robot;
 
 import edu.wpi.first.wpilibj.*;
@@ -34,7 +35,7 @@ public class Robot extends IterativeRobot {
         myRobot.setExpiration(0.1);
         
         server = CameraServer.getInstance();
-        server.setQuality(50);
+        server.setQuality(10);
         //the camera name (ex "cam0") can be found through the roborio web interface
         server.startAutomaticCapture("cam0");
     }
@@ -64,6 +65,20 @@ public class Robot extends IterativeRobot {
     	leftEncoder.reset();
     	rightEncoder.reset();
     }
+    
+    public void rotate(){
+    	rightEncoder.reset();
+    	double currentPostition = -(rightEncoder.get());
+    	    if (currentPostition <= 806){
+    	    	currentPostition = -(rightEncoder.get());
+    		    myRobot.tankDrive(-0.5, 0.5);
+    	    }
+    	    else {
+    		     myRobot.tankDrive(0, 0);
+    	    }
+    	
+    }
+    
     
     public void driveStraight(double distance, double speed, double angle){
     	boolean continueLoop = true;
@@ -138,19 +153,38 @@ public class Robot extends IterativeRobot {
         		double xRightButton = Xbox.getRawAxis(3);
         		boolean intakeout = Xbox.getRawButton(6);
         		boolean intakein = Xbox.getRawButton(5);
+        		boolean SLOWMOTION = Xbox.getRawButton(4);
+        		boolean Turn90 = Xbox.getRawButton(3);
+        		
+        		if (Turn90 == true){
+        			rotate();
+        		}
+        		
+        		System.out.print("\n LEFT ENCODER: ");
+        		System.out.print(leftEncoder.get());
+        		System.out.print("\n RIGHT ENCODER: ");
+        		System.out.print(rightEncoder.get());
+        		
         		
         		if (intakeout == true){
         	        intake.set(-1);
         		}
         		
         		if (intakein == true){
-        			intake.set(1);
+        			intake.set(0.8);
         		}
         		
         		if (intakein != true && intakeout != true){
         			
         			intake.set(0);
         			
+        		}
+        		
+        		
+        		if (SLOWMOTION == true){
+
+        			xLeft = ((xLeft/1.5));
+        			xRight = ((xRight/1.5));
         		}
         		
         		if (xLeftButton > 0.1) {
